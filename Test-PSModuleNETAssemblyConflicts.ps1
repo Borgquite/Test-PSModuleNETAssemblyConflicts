@@ -1,11 +1,11 @@
-﻿# https://learn.microsoft.com/en-us/powershell/scripting/dev-cross-plat/resolving-dependency-conflicts?view=powershell-7.5#differences-in-net-framework-vs-net-core
+﻿# Script to check for .NET Assembly conflicts between PowerShell modules, particularly under Windows PowerShell (which uses .NET Framework).
+# If you import modules in the correct order (latest first), you can sometimes avoid conflicts.
+
+# https://learn.microsoft.com/en-us/powershell/scripting/dev-cross-plat/resolving-dependency-conflicts?view=powershell-7.5#differences-in-net-framework-vs-net-core
     # 'For PowerShell, this means that the following factors can affect an assembly load conflict:
         # Which module was loaded first?
         # Was the code path that uses the dependency library run?
         # Does PowerShell load a conflicting dependency at startup or only under certain code paths?'
-# https://devblogs.microsoft.com/powershell/resolving-powershell-module-assembly-dependency-conflicts/
-
-# [System.AppDomain]::CurrentDomain.GetAssemblies() | Sort-Object Location | Select-Object FullName, Location
 
 $ModulesCheckCommandsForAssemblyClashes = @{
     'Az.Accounts' = {<# Az.Accounts currently load all relevant assemblies on importing the module#>}
