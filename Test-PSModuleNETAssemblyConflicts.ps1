@@ -8,7 +8,7 @@
 # [System.AppDomain]::CurrentDomain.GetAssemblies() | Sort-Object Location | Select-Object FullName, Location
 
 $ModulesCheckCommandsForAssemblyClashes = @{
-    'Az.Accounts' = {Connect-AzAccount -Credential (New-Object System.Management.Automation.PSCredential ("username@contoso.com", (New-Object System.Security.SecureString)))}
+    'Az.Accounts' = {<# Az.Accounts currently load all relevant assemblies on importing the module#>}
     'Microsoft.Graph.Authentication' = {Connect-MgGraph -AccessToken (ConvertTo-SecureString -String "accesstoken" -AsPlainText -Force)}
     'ExchangeOnlineManagement' = {Connect-ExchangeOnline -Credential (New-Object System.Management.Automation.PSCredential ("username@contoso.com", (New-Object System.Security.SecureString))) -DisableWAM}
     'PnP.PowerShell' = {Connect-PnPOnline -Url "https://contoso.sharepoint.com" -Credentials (New-Object System.Management.Automation.PSCredential ("username@contoso.com", (New-Object System.Security.SecureString)))}
@@ -26,10 +26,10 @@ foreach ($ModuleToCheck in $ModulesCheckCommandsForAssemblyClashes.GetEnumerator
 }
 
 # Get all the objects grouped by modules that they share
-$SharedModuleAssemblies = ($AssembliesLoaded | Group-Object {$_.Values.ManifestModule} -AsHashTable -AsString).GetEnumerator() | Where-Object { $_.Value.Count -gt 1 }
+$SharedModuleAssemblies = $AssembliesLoaded | Group-Object {$_.Values.ManifestModule} | Where-Object { $_.Count -gt 1 }
 
 # Want all the modules where the count in the second group may not equal the count in the first group (i.e. not all the same)
-$ConflictingModuleAssemblies = $SharedModuleAssemblies | Select-Object -PipelineVariable SharedModuleAssembly | ForEach-Object { ($SharedModuleAssembly.Value | Group-Object { $_.Values.FullName } -AsHashTable -AsString).GetEnumerator() | Where-Object { $_.Value.Count -lt $SharedModuleAssembly.Value.Count } }
+$ConflictingModuleAssemblies = $SharedModuleAssemblies | Select-Object -PipelineVariable SharedModuleAssembly | ForEach-Object { $SharedModuleAssembly.Group | Group-Object { $_.Values.FullName } } | Where-Object { $_.Count -lt $SharedModuleAssembly.Count }
 
 # List out all of the uniquely conflicting assemblies with each module's path
-$ConflictingModuleAssemblies.Value.Values | Sort-Object FullName, Location -Descending | Select-Object -Unique -Property FullName, Location
+$ConflictingModuleAssemblies.Group.Values | Sort-Object FullName, Location -Descending | Select-Object -Unique -Property FullName, Location
