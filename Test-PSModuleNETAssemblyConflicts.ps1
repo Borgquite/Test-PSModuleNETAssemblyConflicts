@@ -6,6 +6,8 @@
         # Which module was loaded first?
         # Was the code path that uses the dependency library run?
         # Does PowerShell load a conflicting dependency at startup or only under certain code paths?'
+# This command can be used to check for assembly conflicts:
+    # [System.AppDomain]::CurrentDomain.GetAssemblies() | Sort-Object Location | Select-Object FullName, Location
 
 $ModulesCheckCommandsForAssemblyClashes = @{
     'Az.Accounts' = {<# Az.Accounts currently load all relevant assemblies on importing the module#>}
