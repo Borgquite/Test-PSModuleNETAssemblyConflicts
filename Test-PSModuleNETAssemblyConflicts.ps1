@@ -10,7 +10,7 @@
     # [System.AppDomain]::CurrentDomain.GetAssemblies() | Sort-Object Location | Select-Object FullName, Location
 
 $ModulesCheckCommandsForAssemblyClashes = @{
-    'Az.Accounts' = {<# Az.Accounts currently load all relevant assemblies on importing the module#>}
+    'Az.Accounts' = {Connect-AzAccount -Credential (New-Object System.Management.Automation.PSCredential ("username@contoso.com", (New-Object System.Security.SecureString)))}
     'Microsoft.Graph.Authentication' = {Connect-MgGraph -AccessToken (ConvertTo-SecureString -String "accesstoken" -AsPlainText -Force)}
     'ExchangeOnlineManagement' = {Connect-ExchangeOnline -Credential (New-Object System.Management.Automation.PSCredential ("username@contoso.com", (New-Object System.Security.SecureString))) -DisableWAM}
     'PnP.PowerShell' = {Connect-PnPOnline -Url "https://contoso.sharepoint.com" -Credentials (New-Object System.Management.Automation.PSCredential ("username@contoso.com", (New-Object System.Security.SecureString)))}
