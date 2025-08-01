@@ -9,6 +9,8 @@
 # This command can be used to check for assembly conflicts:
     # [System.AppDomain]::CurrentDomain.GetAssemblies() | Sort-Object Location | Select-Object FullName, Location
 
+# Problematic modules to look for: Newtonsoft.Json, Azure.Core, Microsoft.Identity.Client
+
 $ModulesCheckCommandsForAssemblyClashes = @{
     'Az.Accounts' = {Connect-AzAccount -Credential (New-Object System.Management.Automation.PSCredential ("username@contoso.com", (New-Object System.Security.SecureString)))}
     'Microsoft.Graph.Authentication' = {Connect-MgGraph -AccessToken (ConvertTo-SecureString -String "accesstoken" -AsPlainText -Force)}
